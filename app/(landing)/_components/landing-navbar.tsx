@@ -1,6 +1,7 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
+import LoginButton from "@/components/login-button";
 
 const LandingNavbar = () => {
   return (
@@ -20,12 +21,7 @@ const LandingNavbar = () => {
       {/* Member check and Login button */}
       <div className="flex items-center">
         {/* <span className="text-lg mr-3">Already A Member?</span> */}
-        <Link
-          href="/login"
-          className="bg-gray-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg"
-        >
-          Login
-        </Link>
+        <LoginButton />
       </div>
     </nav>
   );
