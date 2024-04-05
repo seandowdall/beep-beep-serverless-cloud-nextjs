@@ -8,12 +8,13 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { PencilIcon } from "lucide-react";
-
-// Assuming Car type is defined based on your DynamoDB car rental data structure
 import { Car } from "@/types/types";
+import Link from "next/link";
+import { useSession } from "next-auth/react";
 
 const CarCard: React.FC<{ car: Car }> = ({ car }) => {
+  const { data: session } = useSession();
+
   const [isEditing, setIsEditing] = useState(false);
 
   const toggleEditForm = () => setIsEditing(!isEditing);
@@ -35,6 +36,9 @@ const CarCard: React.FC<{ car: Car }> = ({ car }) => {
       alert((error as Error).message);
     }
   };
+
+  // Conditional link based on user's session status
+  const bookingLink = session ? "/dashboard" : "/api/auth/signin";
 
   return (
     <div>
@@ -69,7 +73,11 @@ const CarCard: React.FC<{ car: Car }> = ({ car }) => {
               ))}
           </ul>
         </CardContent>
-        <CardFooter></CardFooter>
+        <CardFooter>
+          <Link href={bookingLink}>
+            <Button>Book</Button>
+          </Link>
+        </CardFooter>
       </Card>
     </div>
   );
