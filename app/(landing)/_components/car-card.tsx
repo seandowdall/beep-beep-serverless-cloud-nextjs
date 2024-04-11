@@ -38,7 +38,7 @@ const CarCard: React.FC<{ car: Car }> = ({ car }) => {
   };
 
   // Conditional link based on user's session status
-  const bookingLink = session ? "/dashboard" : "/api/auth/signin";
+  const bookingLink = session ? `/car/${car.CarID}` : "/api/auth/signin";
 
   return (
     <div>

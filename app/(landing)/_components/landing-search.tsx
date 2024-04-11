@@ -6,9 +6,11 @@ import React from "react";
 
 const LandingSearch = () => {
   return (
-    <div className="flex flex-row justify center p-10">
-      <Input placeholder={"Dublin"}></Input>
-      <DatePickerWithRange />
+    <div className="flex flex-row justify center p-10 gap-3">
+      <Input
+        placeholder={"Enter your desired location or dream vehicle ..."}
+      ></Input>
+      {/* <DatePickerWithRange /> */}
       <Button>
         <Search />
       </Button>
