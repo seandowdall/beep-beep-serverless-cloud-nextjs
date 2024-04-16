@@ -18,6 +18,8 @@ const LandingNavbar = () => {
         <span className="text-xl font-semibold ml-3">Beep Beep</span>
       </Link>
 
+      <Link href={"/profile"}>User Profile</Link>
+      <Link href={"/list-your-car"}>List Your Car</Link>
       {/* Member check and Login button */}
       <div className="flex items-center">
         {/* <span className="text-lg mr-3">Already A Member?</span> */}
