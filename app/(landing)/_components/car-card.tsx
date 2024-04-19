@@ -14,7 +14,6 @@ import { useSession } from "next-auth/react";
 
 const CarCard: React.FC<{ car: Car }> = ({ car }) => {
   const { data: session } = useSession();
-
   const [isEditing, setIsEditing] = useState(false);
 
   const toggleEditForm = () => setIsEditing(!isEditing);
@@ -37,12 +36,11 @@ const CarCard: React.FC<{ car: Car }> = ({ car }) => {
     }
   };
 
-  // Conditional link based on user's session status
   const bookingLink = session ? `/car/${car.CarID}` : "/api/auth/signin";
 
   return (
     <div>
-      <Card>
+      <Card className="h-[600px]">
         <CardHeader>
           <CardTitle>
             {car.Make} {car.Model} - {car.Year}
@@ -68,9 +66,12 @@ const CarCard: React.FC<{ car: Car }> = ({ car }) => {
             </li>
             <li>Type: {car.Type}</li>
             {car.Features &&
-              car.Features.map((feature, index) => (
-                <li key={index}>{feature}</li>
-              ))}
+              car.Features.slice(0, 3).map(
+                (
+                  feature,
+                  index // Only show the first three features
+                ) => <li key={index}>{feature}</li>
+              )}
           </ul>
         </CardContent>
         <CardFooter>

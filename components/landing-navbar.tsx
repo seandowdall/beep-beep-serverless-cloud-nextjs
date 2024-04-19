@@ -1,9 +1,18 @@
+"use client";
+
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import LoginButton from "@/components/login-button";
+import { useSession } from "next-auth/react";
 
 const LandingNavbar = () => {
+  const { data: session } = useSession();
+
+  const profileLink = session ? `/profile` : "/api/auth/signin";
+
+  const listLink = session ? `/list-your-car` : "/api/auth/signin";
+
   return (
     <nav className="bg-gray-200 shadow-md h-20 flex items-center justify-between px-10">
       {/* Logo and Site Name */}
@@ -18,8 +27,8 @@ const LandingNavbar = () => {
         <span className="text-xl font-semibold ml-3">Beep Beep</span>
       </Link>
 
-      <Link href={"/profile"}>User Profile</Link>
-      <Link href={"/list-your-car"}>List Your Car</Link>
+      <Link href={profileLink}>User Profile</Link>
+      <Link href={listLink}>List Your Car</Link>
       {/* Member check and Login button */}
       <div className="flex items-center">
         {/* <span className="text-lg mr-3">Already A Member?</span> */}

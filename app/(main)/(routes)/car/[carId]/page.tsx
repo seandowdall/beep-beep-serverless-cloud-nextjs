@@ -8,9 +8,11 @@ import { ChevronLeftCircle } from "lucide-react";
 const CarIdPage = () => {
   const pathname = usePathname();
   const carId = pathname.split("/").pop();
-
   const [car, setCar] = useState<Car | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [startDate, setStartDate] = useState<string>("");
+  const [endDate, setEndDate] = useState<string>("");
+  const [isDateValid, setIsDateValid] = useState<boolean>(false);
 
   useEffect(() => {
     if (!carId) {
@@ -34,6 +36,15 @@ const CarIdPage = () => {
 
     fetchCarDetails();
   }, [carId]);
+
+  const handleDateChange = (start: string, end: string) => {
+    setStartDate(start);
+    setEndDate(end);
+    // Simple validation: Ensure that the start date is before the end date
+    const startD = new Date(start);
+    const endD = new Date(end);
+    setIsDateValid(startD <= endD && startD > new Date());
+  };
 
   if (error)
     return <div className="text-red-500 text-lg font-bold">Error: {error}</div>;
@@ -69,7 +80,7 @@ const CarIdPage = () => {
                 <li key={index}>{feature}</li>
               ))}
           </ul>
-          <p className="text-lg font-semibold">Price: ${car.Price} per day</p>
+          <p className="text-lg font-semibold">Price: {car.Price} per day</p>
           {car.Location && <p className="text-lg">Location: {car.Location}</p>}
           {car.Type && <p className="text-lg">Type: {car.Type}</p>}
           {typeof car.Availability !== "undefined" && (
@@ -77,14 +88,41 @@ const CarIdPage = () => {
               Availability: {car.Availability ? "Available" : "Not Available"}
             </p>
           )}
+          {/* Date input for booking */}
           <div className="mt-4">
-            <Link
-              href={`/booking/${carId}`}
-              className="inline-block bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700 transition-colors duration-200"
-            >
-              Proceed to Payment
-            </Link>
+            <h3>From:</h3>
+            <input
+              type="date"
+              value={startDate}
+              onChange={(e) => handleDateChange(e.target.value, endDate)}
+              className="mr-2 p-2 border rounded"
+            />
+            <h3 className="mt-4">To:</h3>
+            <input
+              type="date"
+              value={endDate}
+              onChange={(e) => handleDateChange(startDate, e.target.value)}
+              className="p-2 border rounded"
+            />
           </div>
+          {/* Conditional rendering based on date validation */}
+          {isDateValid ? (
+            <div>
+              <h3 className="mt-4">Car is available on these dates!</h3>
+              <Link
+                href={`/booking/${carId}?start=${startDate}&end=${endDate}`}
+                className="inline-block bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700 transition-colors duration-200 mt-4"
+              >
+                Book This Car (Payment Proccessed Upon Acceptance from Vehicle
+                Owner)
+              </Link>
+            </div>
+          ) : (
+            <p className="text-red-500 mt-4">
+              Please enter valid start and end dates (cars must be booked a day
+              in advance).
+            </p>
+          )}
         </div>
       </div>
     </div>

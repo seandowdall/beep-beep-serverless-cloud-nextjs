@@ -2,8 +2,9 @@
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid"; // You need to install uuid library
+import { useSession } from "next-auth/react"; // Or your auth hook from Cognito
 
 // Define the TypeScript interface for our form data
 interface CarFormData {
@@ -17,6 +18,7 @@ interface CarFormData {
   location: string;
   price: number;
   type: string;
+  userID: string; // Add userID to the form data
 }
 
 function generateCarID() {
@@ -24,6 +26,8 @@ function generateCarID() {
 }
 
 const ListYourCar = () => {
+  const { data: session } = useSession();
+
   const [formData, setFormData] = useState<CarFormData>({
     make: "",
     model: "",
@@ -35,7 +39,17 @@ const ListYourCar = () => {
     location: "",
     price: 50,
     type: "",
+    userID: " ", // Initialize with the user ID from session
   });
+
+  useEffect(() => {
+    // Ensure userID is always a string; set it to an empty string if session or session.user is not defined
+    const userID = session?.user?.name ?? ""; // Use nullish coalescing to handle undefined or null
+    setFormData((currentData) => ({
+      ...currentData,
+      userID: userID,
+    }));
+  }, [session]);
 
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
@@ -67,40 +81,29 @@ const ListYourCar = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
-    setError(null);
+    if (!formData.userID) {
+      setError("User not authenticated.");
+      return;
+    }
 
-    // Generate a unique CarID
+    setLoading(true);
     const carID = generateCarID();
-    const carDataWithID = {
-      ...formData,
-      CarID: carID,
-    };
+    const carDataWithID = { ...formData, CarID: carID };
 
     const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
     try {
-      // Placeholder for your actual image upload logic
-      // const imageUrls = fileInputState.map(
-      //   (file) => `https://example.com/path/to/${file.name}`
-      // );
-      // carDataWithID.images = imageUrls;
-
       const res = await fetch(`${apiUrl}/cars`, {
         method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(carDataWithID),
       });
 
-      const data = await res.json(); // Parsing JSON response
       if (!res.ok) {
-        throw new Error(data.error || "Failed to list car");
+        throw new Error((await res.json()).error || "Failed to list car");
       }
-
       alert("Car listed successfully!");
-
       setFormData({
+        ...formData,
         make: "",
         model: "",
         year: new Date().getFullYear(),
@@ -111,6 +114,7 @@ const ListYourCar = () => {
         location: "",
         price: 0,
         type: "",
+        userID: "", // Reset userID to empty string or keep as is if you expect continuous use
       });
       setFileInputState([]);
     } catch (err) {
@@ -122,6 +126,9 @@ const ListYourCar = () => {
     }
   };
 
+  if (!session || !session.user) {
+    return <p>User not authenticated</p>;
+  }
   return (
     <div className="container mx-auto mt-5">
       <Card className="p-20">
@@ -134,7 +141,7 @@ const ListYourCar = () => {
               <h3 className="font-medium">1. Vehicle Make</h3>
               <input
                 type="text"
-                name="Make"
+                name="make"
                 value={formData.make}
                 onChange={handleChange}
                 placeholder="Make"
@@ -146,7 +153,7 @@ const ListYourCar = () => {
               <h3 className="font-medium">2. Vehicle Model</h3>
               <input
                 type="text"
-                name="Model"
+                name="model"
                 value={formData.model}
                 onChange={handleChange}
                 placeholder="Model"
@@ -158,7 +165,7 @@ const ListYourCar = () => {
               <h3 className="font-medium">3. Vehicle Year</h3>
               <input
                 type="number"
-                name="Year"
+                name="year"
                 value={formData.year}
                 onChange={handleChange}
                 placeholder="Year"
@@ -169,7 +176,7 @@ const ListYourCar = () => {
             <div className="flex flex-col gap-y-4">
               <h3 className="font-medium">5. Description of your vehicle</h3>
               <textarea
-                name="Description"
+                name="description"
                 value={formData.description}
                 onChange={handleChange}
                 placeholder="Description"
@@ -181,7 +188,7 @@ const ListYourCar = () => {
             <div className="flex flex-col gap-y-4">
               <h3 className="font-medium">6. Vehicle Features</h3>
               <textarea
-                name="Features"
+                name="features"
                 value={formData.features.join(", ")}
                 onChange={handleChange}
                 placeholder="Features (comma-separated)"
@@ -192,7 +199,7 @@ const ListYourCar = () => {
               <h3 className="font-medium">7. Location</h3>
               <input
                 type="text"
-                name="Location"
+                name="location"
                 value={formData.location}
                 onChange={handleChange}
                 placeholder="Location"
@@ -204,7 +211,7 @@ const ListYourCar = () => {
               <h3 className="font-medium">8. Price Per Day</h3>
               <input
                 type="number"
-                name="Price"
+                name="price"
                 value={formData.price}
                 onChange={handleChange}
                 placeholder="Price per day"
@@ -216,7 +223,7 @@ const ListYourCar = () => {
               <h3 className="font-medium">9. Type of vehicle</h3>
               <input
                 type="text"
-                name="Type"
+                name="type"
                 value={formData.type}
                 onChange={handleChange}
                 placeholder="Type (e.g., Sedan)"
