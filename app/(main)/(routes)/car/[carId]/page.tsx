@@ -80,7 +80,7 @@ const CarIdPage = () => {
                 <li key={index}>{feature}</li>
               ))}
           </ul>
-          <p className="text-lg font-semibold">Price: {car.price} per day</p>
+          <p className="text-lg font-semibold">Price: €{car.price} per day</p>
           {car.location && <p className="text-lg">Location: {car.location}</p>}
           {car.type && <p className="text-lg">Type: {car.type}</p>}
           {typeof car.availability !== "undefined" && (
