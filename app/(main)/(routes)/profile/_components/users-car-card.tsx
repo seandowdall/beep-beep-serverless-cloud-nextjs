@@ -12,6 +12,8 @@ import { Car } from "@/types/types";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { PencilIcon, Trash2 } from "lucide-react";
+import DeleteAlertDialog from "@/components/delete-alert-dialog";
+import EditCarForm from "./edit-car-form";
 
 const UsersCarCard: React.FC<{ car: Car }> = ({ car }) => {
   const { data: session } = useSession();
@@ -75,11 +77,9 @@ const UsersCarCard: React.FC<{ car: Car }> = ({ car }) => {
         </CardContent>
         <CardFooter className="flex flex-row gap-2">
           <Button variant={"destructive"}>
-            <div className="flex flex-row gap-2 items-center">
-              Delete Car <Trash2 />
-            </div>
+            <DeleteAlertDialog onDeleteConfirm={deleteCar} />
           </Button>
-          <Button>
+          <Button onClick={toggleEditForm}>
             <div className="flex flex-row gap-2 items-center">
               Edit Car
               <PencilIcon />
@@ -87,6 +87,8 @@ const UsersCarCard: React.FC<{ car: Car }> = ({ car }) => {
           </Button>
         </CardFooter>
       </Card>
+
+      {isEditing && <EditCarForm car={car} onClose={toggleEditForm} />}
     </div>
   );
 };
