@@ -27,7 +27,11 @@ const DeleteAlertDialog: React.FC<DeleteAlertDialogProps> = ({
     <div>
       <AlertDialog>
         <AlertDialogTrigger asChild>
-          <Button variant={"destructive"}>
+          <Button
+            variant={"destructive"}
+            className="flex flex-row items-center gap-2"
+          >
+            Delete Car
             <Trash />
           </Button>
         </AlertDialogTrigger>
