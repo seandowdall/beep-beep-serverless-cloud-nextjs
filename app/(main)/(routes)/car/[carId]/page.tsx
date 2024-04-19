@@ -62,30 +62,30 @@ const CarIdPage = () => {
         </div>
       </Link>
       <div className="bg-white shadow-md rounded-lg overflow-hidden">
-        {car.Images && car.Images.length > 0 && (
+        {car.images && car.images.length > 0 && (
           <img
-            src={car.Images[0]}
-            alt={`${car.Make} ${car.Model}`}
+            src={car.images[0]}
+            alt={`${car.make} ${car.model}`}
             className="w-full h-64 object-cover"
           />
         )}
         <div className="p-4">
           <h2 className="text-2xl font-bold mb-2">
-            {car.Make} {car.Model} - {car.Year}
+            {car.make} {car.model} - {car.year}
           </h2>
-          <p className="text-gray-700 mb-4">{car.Description}</p>
+          <p className="text-gray-700 mb-4">{car.description}</p>
           <ul className="list-disc list-inside mb-4">
-            {car.Features &&
-              car.Features.map((feature, index) => (
+            {car.features &&
+              car.features.map((feature, index) => (
                 <li key={index}>{feature}</li>
               ))}
           </ul>
-          <p className="text-lg font-semibold">Price: {car.Price} per day</p>
-          {car.Location && <p className="text-lg">Location: {car.Location}</p>}
-          {car.Type && <p className="text-lg">Type: {car.Type}</p>}
-          {typeof car.Availability !== "undefined" && (
+          <p className="text-lg font-semibold">Price: {car.price} per day</p>
+          {car.location && <p className="text-lg">Location: {car.location}</p>}
+          {car.type && <p className="text-lg">Type: {car.type}</p>}
+          {typeof car.availability !== "undefined" && (
             <p className="text-lg">
-              Availability: {car.Availability ? "Available" : "Not Available"}
+              Availability: {car.availability ? "Available" : "Not Available"}
             </p>
           )}
           {/* Date input for booking */}

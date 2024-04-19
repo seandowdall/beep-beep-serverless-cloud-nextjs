@@ -11,8 +11,9 @@ import { Button } from "@/components/ui/button";
 import { Car } from "@/types/types";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
+import { PencilIcon, Trash2 } from "lucide-react";
 
-const CarCard: React.FC<{ car: Car }> = ({ car }) => {
+const UsersCarCard: React.FC<{ car: Car }> = ({ car }) => {
   const { data: session } = useSession();
   const [isEditing, setIsEditing] = useState(false);
 
@@ -36,11 +37,9 @@ const CarCard: React.FC<{ car: Car }> = ({ car }) => {
     }
   };
 
-  const bookingLink = session ? `/car/${car.CarID}` : "/api/auth/signin";
-
   return (
     <div>
-      <Card className="h-[600px]">
+      <Card className="">
         <CardHeader>
           <CardTitle>
             {car.make} {car.model} - {car.year}
@@ -74,14 +73,22 @@ const CarCard: React.FC<{ car: Car }> = ({ car }) => {
               )}
           </ul>
         </CardContent>
-        <CardFooter>
-          <Link href={bookingLink}>
-            <Button>Book</Button>
-          </Link>
+        <CardFooter className="flex flex-row gap-2">
+          <Button variant={"destructive"}>
+            <div className="flex flex-row gap-2 items-center">
+              Delete Car <Trash2 />
+            </div>
+          </Button>
+          <Button>
+            <div className="flex flex-row gap-2 items-center">
+              Edit Car
+              <PencilIcon />
+            </div>
+          </Button>
         </CardFooter>
       </Card>
     </div>
   );
 };
 
-export default CarCard;
+export default UsersCarCard;

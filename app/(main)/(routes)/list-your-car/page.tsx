@@ -43,13 +43,21 @@ const ListYourCar = () => {
   });
 
   useEffect(() => {
-    // Ensure userID is always a string; set it to an empty string if session or session.user is not defined
-    const userID = session?.user?.name ?? ""; // Use nullish coalescing to handle undefined or null
-    setFormData((currentData) => ({
-      ...currentData,
-      userID: userID,
-    }));
-  }, [session]);
+    if (session?.user) {
+      console.log("User email:", session.user.email); // Log the user's email
+      const userID = session.user.email ?? ""; // Default to an empty string if email is undefined
+      setFormData((currentData) => ({
+        ...currentData,
+        userID: userID,
+      }));
+    } else {
+      // Handle the case where session or session.user is not defined
+      setFormData((currentData) => ({
+        ...currentData,
+        userID: "",
+      }));
+    }
+  }, [session]); // Depend on the session object so this effect runs when session data changes
 
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
@@ -126,9 +134,6 @@ const ListYourCar = () => {
     }
   };
 
-  if (!session || !session.user) {
-    return <p>User not authenticated</p>;
-  }
   return (
     <div className="container mx-auto mt-5">
       <Card className="p-20">
@@ -148,7 +153,6 @@ const ListYourCar = () => {
                 required
               />
             </div>
-
             <div className="flex flex-col gap-y-4">
               <h3 className="font-medium">2. Vehicle Model</h3>
               <input
@@ -160,7 +164,6 @@ const ListYourCar = () => {
                 required
               />
             </div>
-
             <div className="flex flex-col gap-y-4">
               <h3 className="font-medium">3. Vehicle Year</h3>
               <input
