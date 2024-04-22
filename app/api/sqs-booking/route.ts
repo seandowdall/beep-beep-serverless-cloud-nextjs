@@ -19,6 +19,19 @@ export async function POST(request: NextRequest) {
   const { CarID, userID, startDate, endDate } = JSON.parse(
     requestBody
   ) as BookingDetails;
+
+  if (!CarID || typeof CarID !== "string" || CarID.trim() === "") {
+    return new NextResponse(
+      JSON.stringify({ message: "Invalid CarID provided" }),
+      {
+        status: 400,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+  }
+
   const deduplicationId = `${userID}-${CarID}-${new Date().getTime()}`;
 
   const params = {

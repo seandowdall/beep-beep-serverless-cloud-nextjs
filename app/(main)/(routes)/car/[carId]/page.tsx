@@ -9,7 +9,7 @@ import { useSession } from "next-auth/react";
 const CarIdPage = () => {
   const { data: session } = useSession();
   const pathname = usePathname();
-  const carId = pathname.split("/").pop();
+  const CarID = pathname.split("/").pop();
   const [car, setCar] = useState<Car | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [startDate, setStartDate] = useState<string>("");
@@ -17,7 +17,10 @@ const CarIdPage = () => {
   const [isDateValid, setIsDateValid] = useState<boolean>(false);
 
   useEffect(() => {
-    if (!carId) {
+    console.log("Pathname:", pathname);
+    console.log("Car ID:", CarID);
+
+    if (!CarID) {
       setError("Car ID not found.");
       return;
     }
@@ -25,7 +28,7 @@ const CarIdPage = () => {
     const fetchCarDetails = async () => {
       try {
         const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
-        const response = await fetch(`${apiUrl}/cars/${carId}`);
+        const response = await fetch(`${apiUrl}/cars/${CarID}`);
         if (!response.ok) {
           throw new Error("Failed to fetch car details.");
         }
@@ -37,7 +40,7 @@ const CarIdPage = () => {
     };
 
     fetchCarDetails();
-  }, [carId]);
+  }, [CarID]);
 
   const handleDateChange = (start: string, end: string) => {
     setStartDate(start);
@@ -60,8 +63,8 @@ const CarIdPage = () => {
     }
 
     const bookingDetails = {
-      carId,
-      userId: session?.user?.email,
+      CarID,
+      userID: session?.user?.email,
       startDate,
       endDate,
     };
