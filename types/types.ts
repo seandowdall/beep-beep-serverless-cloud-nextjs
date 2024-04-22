@@ -12,3 +12,14 @@ export interface Car {
   year: number;
   userID: string;
 }
+
+export interface Booking {
+  bookingID: string;
+  userID: string;
+  isApproved: boolean;
+  startDate: string; // ISO string format for date
+  endDate: string; // ISO string format for date
+  make: string;
+  model: string;
+  totalCost: number;
+}

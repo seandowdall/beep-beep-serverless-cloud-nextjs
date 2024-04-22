@@ -5,6 +5,7 @@ import { Car } from "@/types/types"; // Assuming this is your type definition
 import Link from "next/link"; // Import Link for navigation
 import { ChevronLeftCircle } from "lucide-react";
 import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 const CarIdPage = () => {
   const { data: session } = useSession();
@@ -15,6 +16,7 @@ const CarIdPage = () => {
   const [startDate, setStartDate] = useState<string>("");
   const [endDate, setEndDate] = useState<string>("");
   const [isDateValid, setIsDateValid] = useState<boolean>(false);
+  const router = useRouter();
 
   useEffect(() => {
     console.log("Pathname:", pathname);
@@ -80,7 +82,10 @@ const CarIdPage = () => {
 
       const data = await response.json();
       if (response.ok) {
-        alert("Booking request submitted!");
+        alert(
+          "Booking request submitted! Please await confirmation email before proceeding."
+        );
+        router.push("/profile");
       } else {
         alert(`Failed to book: ${data.message}`);
       }
@@ -153,7 +158,7 @@ const CarIdPage = () => {
           {/* Conditional rendering based on date validation */}
           {isDateValid ? (
             <div>
-              <h3 className="mt-4">Car is available on these dates!</h3>
+              <h3 className="mt-4">These dates may be available!</h3>
               <button
                 onClick={bookCar}
                 className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700 transition-colors duration-200 mt-4"

@@ -50,14 +50,26 @@ const ProfilePage = () => {
 
   return (
     <div className="container mx-auto mt-5">
-      <h1 className="text-xl font-bold my-10">Your Fleet Of Listed Cars</h1>
-      {cars.length > 0 ? (
-        cars.map((car) => (
-          <UsersCarCard key={car.CarID} car={car} /> // Use CarCard component for each car
-        ))
-      ) : (
-        <p>No cars listed yet.</p>
-      )}
+      <div>
+        <h1 className="text-3xl font-bold my-10">Your Fleet Of Listed Cars</h1>
+        {cars.length > 0 ? (
+          cars.map((car) => (
+            <UsersCarCard key={car.CarID} car={car} /> // Use CarCard component for each car
+          ))
+        ) : (
+          <p>No cars listed yet.</p>
+        )}
+      </div>
+      <div>
+        <h1 className="text-3xl font-bold my-10">Your Upcoming Bookings!</h1>
+        {cars.length > 0 ? (
+          cars.map((car) => (
+            <UsersCarCard key={car.CarID} car={car} /> // Use CarCard component for each car
+          ))
+        ) : (
+          <p>No cars listed yet.</p>
+        )}
+      </div>
     </div>
   );
 };
