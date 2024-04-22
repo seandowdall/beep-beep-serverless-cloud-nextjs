@@ -4,8 +4,10 @@ import { usePathname } from "next/navigation";
 import { Car } from "@/types/types"; // Assuming this is your type definition
 import Link from "next/link"; // Import Link for navigation
 import { ChevronLeftCircle } from "lucide-react";
+import { useSession } from "next-auth/react";
 
 const CarIdPage = () => {
+  const { data: session } = useSession();
   const pathname = usePathname();
   const carId = pathname.split("/").pop();
   const [car, setCar] = useState<Car | null>(null);
@@ -51,28 +53,44 @@ const CarIdPage = () => {
   if (!car) return <div className="text-lg font-bold">Loading...</div>;
 
   //Add functionality to POST to your /api/booking endpoint when the user confirms their booking.
-  // const bookCar = async () => {
-  //   if (!isDateValid) {
-  //     alert('Invalid dates selected.');
-  //     return;
-  //   }
+  const bookCar = async () => {
+    if (!isDateValid) {
+      alert("Invalid dates selected.");
+      return;
+    }
 
-  //   const bookingDetails = { carId, userId: 'user123', startDate, endDate };
-  //   const response = await fetch('/api/booking', {
-  //     method: 'POST',
-  //     headers: {
-  //       'Content-Type': 'application/json',
-  //     },
-  //     body: JSON.stringify(bookingDetails),
-  //   });
+    const bookingDetails = {
+      carId,
+      userId: session?.user?.email,
+      startDate,
+      endDate,
+    };
 
-  //   const data = await response.json();
-  //   if (response.ok) {
-  //     alert('Booking request submitted!');
-  //   } else {
-  //     alert(`Failed to book: ${data.message}`);
-  //   }
-  // };
+    try {
+      const response = await fetch("/api/sqs-booking", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(bookingDetails),
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        alert("Booking request submitted!");
+      } else {
+        alert(`Failed to book: ${data.message}`);
+      }
+    } catch (error) {
+      // Check if 'error' is an instance of 'Error' to access 'message' safely
+      if (error instanceof Error) {
+        setError(error.message);
+      } else {
+        // Fallback error message if the caught error is not an instance of Error
+        setError("An unexpected error occurred");
+      }
+    }
+  };
 
   return (
     <div className="max-w-4xl mx-auto p-5">
@@ -133,13 +151,12 @@ const CarIdPage = () => {
           {isDateValid ? (
             <div>
               <h3 className="mt-4">Car is available on these dates!</h3>
-              <Link
-                href={`/booking/${carId}?start=${startDate}&end=${endDate}`}
-                className="inline-block bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700 transition-colors duration-200 mt-4"
+              <button
+                onClick={bookCar}
+                className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700 transition-colors duration-200 mt-4"
               >
-                Book This Car (Payment Proccessed Upon Acceptance from Vehicle
-                Owner)
-              </Link>
+                Book This Car
+              </button>
             </div>
           ) : (
             <p className="text-red-500 mt-4">
