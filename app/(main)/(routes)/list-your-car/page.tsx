@@ -3,22 +3,25 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import React, { useEffect, useState } from "react";
-import { v4 as uuidv4 } from "uuid"; // You need to install uuid library
-import { useSession } from "next-auth/react"; // Or your auth hook from Cognito
+import { v4 as uuidv4 } from "uuid";
+import { useSession } from "next-auth/react";
 
-// Define the TypeScript interface for our form data
 interface CarFormData {
   make: string;
   model: string;
   year: number;
   color: string;
   description: string;
-  features: string[]; // Field for features
-  images: string[]; // Field for storing image URLs
+  features: string[];
+  images: string[];
   location: string;
   price: number;
   type: string;
-  userID: string; // Add userID to the form data
+  userID: string;
+}
+
+interface UploadResponse {
+  Key: string; // Assuming the response includes the object key
 }
 
 function generateCarID() {
@@ -27,7 +30,6 @@ function generateCarID() {
 
 const ListYourCar = () => {
   const { data: session } = useSession();
-
   const [formData, setFormData] = useState<CarFormData>({
     make: "",
     model: "",
@@ -39,52 +41,64 @@ const ListYourCar = () => {
     location: "",
     price: 50,
     type: "",
-    userID: " ", // Initialize with the user ID from session
+    userID: " ",
   });
-
-  useEffect(() => {
-    if (session?.user) {
-      console.log("User email:", session.user.email); // Log the user's email
-      const userID = session.user.email ?? ""; // Default to an empty string if email is undefined
-      setFormData((currentData) => ({
-        ...currentData,
-        userID: userID,
-      }));
-    } else {
-      // Handle the case where session or session.user is not defined
-      setFormData((currentData) => ({
-        ...currentData,
-        userID: "",
-      }));
-    }
-  }, [session]); // Depend on the session object so this effect runs when session data changes
-
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [fileInputState, setFileInputState] = useState<File[]>([]);
+
+  useEffect(() => {
+    if (session?.user) {
+      setFormData((currentData) => ({
+        ...currentData,
+        userID: session?.user?.email ?? "",
+      }));
+    } else {
+      setFormData((currentData) => ({ ...currentData, userID: "" }));
+    }
+  }, [session]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
-    if (name === "features") {
-      // Convert comma-separated string back to array when input changes
-      const featuresArray = value.split(",").map((feature) => feature.trim());
-      setFormData((prev) => ({
-        ...prev,
-        [name]: featuresArray,
-      }));
-    } else {
-      setFormData((prev) => ({
-        ...prev,
-        [name]: value,
-      }));
-    }
+    setFormData((prev) => ({
+      ...prev,
+      [name]:
+        name === "features"
+          ? value.split(",").map((feature) => feature.trim())
+          : value,
+    }));
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files ? Array.from(e.target.files) : [];
     setFileInputState(files);
+
+    const formData = new FormData();
+    files.forEach((file) => formData.append("file", file));
+
+    try {
+      const response = await fetch("/api/s3-upload", {
+        method: "POST",
+        body: formData,
+      });
+      const keys = await response.json();
+
+      const bucket = process.env.NEXT_PUBLIC_S3_BUCKET;
+      const imageUrls = keys.map(
+        (key: string) => `https://${bucket}.s3.amazonaws.com/${key}`
+      );
+      setFormData((prev) => ({
+        ...prev,
+        images: [...prev.images, ...imageUrls],
+      }));
+    } catch (err) {
+      const error =
+        err instanceof Error ? err : new Error("An unexpected error occurred");
+      console.error("Upload error:", error);
+      setError("Failed to upload images: " + error.message);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -100,18 +114,20 @@ const ListYourCar = () => {
 
     const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
     try {
-      const res = await fetch(`${apiUrl}/cars`, {
+      const response = await fetch(`${apiUrl}/cars`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(carDataWithID),
       });
 
-      if (!res.ok) {
-        throw new Error((await res.json()).error || "Failed to list car");
+      if (!response.ok) {
+        const errorResponse = await response.json();
+        throw new Error(errorResponse.error || "Failed to update DynamoDB");
       }
-      alert("Car listed successfully!");
+
+      alert("Car listed and database updated successfully!");
+      // Reset form and state
       setFormData({
-        ...formData,
         make: "",
         model: "",
         year: new Date().getFullYear(),
@@ -122,13 +138,13 @@ const ListYourCar = () => {
         location: "",
         price: 0,
         type: "",
-        userID: "", // Reset userID to empty string or keep as is if you expect continuous use
+        userID: "",
       });
       setFileInputState([]);
     } catch (err) {
-      setError(
-        err instanceof Error ? err.message : "An unexpected error occurred"
-      );
+      const error =
+        err instanceof Error ? err : new Error("An unexpected error occurred");
+      setError(error.message);
     } finally {
       setLoading(false);
     }
