@@ -19,7 +19,7 @@ export interface Booking {
   isApproved: boolean;
   startDate: string; // ISO string format for date
   endDate: string; // ISO string format for date
-  make: string;
-  model: string;
-  totalCost: number;
+  // make: string;
+  // model: string;
+  // totalCost: number;
 }

@@ -11,10 +11,7 @@ const BookingCard: React.FC<BookingCardProps> = ({ booking }) => {
     <div>
       <Card className="mt-10">
         <CardHeader>
-          <CardTitle>
-            {booking.make} {booking.model} // Use booking details for car make
-            and model
-          </CardTitle>
+          <CardTitle>{/* {booking.make} {booking.model}  */}</CardTitle>
         </CardHeader>
         <CardContent>
           <ul>
@@ -25,7 +22,7 @@ const BookingCard: React.FC<BookingCardProps> = ({ booking }) => {
             </li>
             <li>Start Date: {booking.startDate}</li>
             <li>End Date: {booking.endDate}</li>
-            <li>Total Cost: €{booking.totalCost}</li>
+            {/* <li>Total Cost: €{booking.totalCost}</li> */}
           </ul>
         </CardContent>
       </Card>
