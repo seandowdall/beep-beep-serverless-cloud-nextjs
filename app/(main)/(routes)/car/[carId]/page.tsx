@@ -50,6 +50,30 @@ const CarIdPage = () => {
     return <div className="text-red-500 text-lg font-bold">Error: {error}</div>;
   if (!car) return <div className="text-lg font-bold">Loading...</div>;
 
+  //Add functionality to POST to your /api/booking endpoint when the user confirms their booking.
+  // const bookCar = async () => {
+  //   if (!isDateValid) {
+  //     alert('Invalid dates selected.');
+  //     return;
+  //   }
+
+  //   const bookingDetails = { carId, userId: 'user123', startDate, endDate };
+  //   const response = await fetch('/api/booking', {
+  //     method: 'POST',
+  //     headers: {
+  //       'Content-Type': 'application/json',
+  //     },
+  //     body: JSON.stringify(bookingDetails),
+  //   });
+
+  //   const data = await response.json();
+  //   if (response.ok) {
+  //     alert('Booking request submitted!');
+  //   } else {
+  //     alert(`Failed to book: ${data.message}`);
+  //   }
+  // };
+
   return (
     <div className="max-w-4xl mx-auto p-5">
       <Link
