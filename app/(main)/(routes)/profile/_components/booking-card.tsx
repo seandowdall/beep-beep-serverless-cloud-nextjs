@@ -15,7 +15,7 @@ const BookingCard: React.FC<BookingCardProps> = ({ booking }) => {
         </CardHeader>
         <CardContent>
           <ul>
-            <li>Booking ID: {booking.bookingID}</li>
+            <li>Booking ID: {booking.BookingID}</li>
             <li>User ID: {booking.userID}</li>
             <li>
               Approval Status: {booking.isApproved ? "Approved" : "Pending"}

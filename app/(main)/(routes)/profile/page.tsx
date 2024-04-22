@@ -81,7 +81,7 @@ const ProfilePage = () => {
   return (
     <div className="container mx-auto mt-5">
       <div>
-        <h1 className="text-3xl font-bold my-10">Your Fleet Of Listed Cars</h1>
+        <h1 className="text-3xl font-bold mt-5">Your Fleet Of Listed Cars</h1>
         {cars.length > 0 ? (
           cars.map((car) => (
             <UsersCarCard key={car.CarID} car={car} /> // Use CarCard component for each car
@@ -90,11 +90,11 @@ const ProfilePage = () => {
           <p>No cars listed yet.</p>
         )}
       </div>
-      <div>
-        <h1 className="text-3xl font-bold my-10">Your Upcoming Bookings!</h1>
+      <div className="mb-10">
+        <h1 className="text-3xl font-bold mt-5">Your Upcoming Bookings!</h1>
         {bookings.length > 0 ? (
           bookings.map((booking) => (
-            <BookingCard key={booking.bookingID} booking={booking} /> // Use CarCard component for each car
+            <BookingCard key={booking.BookingID} booking={booking} /> // Use CarCard component for each car
           ))
         ) : (
           <p>No bookings yet.</p>
