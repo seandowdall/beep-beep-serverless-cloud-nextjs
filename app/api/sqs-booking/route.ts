@@ -6,8 +6,8 @@ import { buffer } from "stream/consumers"; // Importing utility to convert strea
 const sqsClient = new SQSClient({ region: "eu-west-1" });
 
 interface BookingDetails {
-  carId: string;
-  userId: string;
+  CarID: string;
+  userID: string;
   startDate: string;
   endDate: string;
 }
@@ -16,14 +16,14 @@ interface BookingDetails {
 export async function POST(request: NextRequest) {
   // Ensure the body is read as a JSON object
   const requestBody = await request.text(); // Use .text() to read the body text directly
-  const { carId, userId, startDate, endDate } = JSON.parse(
+  const { CarID, userID, startDate, endDate } = JSON.parse(
     requestBody
   ) as BookingDetails;
-  const deduplicationId = `${userId}-${carId}-${new Date().getTime()}`;
+  const deduplicationId = `${userID}-${CarID}-${new Date().getTime()}`;
 
   const params = {
     QueueUrl: process.env.SQS_QUEUE_URL,
-    MessageBody: JSON.stringify({ carId, userId, startDate, endDate }),
+    MessageBody: JSON.stringify({ CarID, userID, startDate, endDate }),
     MessageGroupId: "BookingRequests",
     MessageDeduplicationId: deduplicationId,
   };
