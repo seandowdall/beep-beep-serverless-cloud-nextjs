@@ -41,7 +41,7 @@ const UsersCarCard: React.FC<{ car: Car }> = ({ car }) => {
 
   return (
     <div>
-      <Card className="">
+      <Card className="mt-10">
         <CardHeader>
           <CardTitle>
             {car.make} {car.model} - {car.year}

@@ -50,7 +50,7 @@ const ProfilePage = () => {
 
   return (
     <div className="container mx-auto mt-5">
-      <h1 className="text-xl font-bold mb-4">Your Fleet Of Listed Cars</h1>
+      <h1 className="text-xl font-bold my-10">Your Fleet Of Listed Cars</h1>
       {cars.length > 0 ? (
         cars.map((car) => (
           <UsersCarCard key={car.CarID} car={car} /> // Use CarCard component for each car
