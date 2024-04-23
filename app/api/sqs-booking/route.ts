@@ -3,7 +3,13 @@ import { NextRequest, NextResponse } from "next/server";
 import { SQSClient, SendMessageCommand } from "@aws-sdk/client-sqs";
 import { buffer } from "stream/consumers"; // Importing utility to convert stream to buffer
 
-const sqsClient = new SQSClient({ region: "eu-west-1" });
+const sqsClient = new SQSClient({
+  region: "eu-west-1",
+  credentials: {
+    accessKeyId: process.env.ACCESS_KEY_ID as string,
+    secretAccessKey: process.env.SECRET_ACCESS_KEY as string,
+  },
+});
 
 interface BookingDetails {
   CarID: string;
