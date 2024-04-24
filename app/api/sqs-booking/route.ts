@@ -1,15 +1,6 @@
-// Filename: /app/api/sqs-booking/route.ts
 import { NextRequest, NextResponse } from "next/server";
-import { SQSClient, SendMessageCommand } from "@aws-sdk/client-sqs";
-import { buffer } from "stream/consumers"; // Importing utility to convert stream to buffer
-
-const sqsClient = new SQSClient({
-  region: "eu-west-1",
-  credentials: {
-    accessKeyId: process.env.ACCESS_KEY_ID as string,
-    secretAccessKey: process.env.SECRET_ACCESS_KEY as string,
-  },
-});
+import { SendMessageCommand } from "@aws-sdk/client-sqs";
+import { sqsClient } from "@/utils/sqsClientOptions"; // Adjust the path as necessary
 
 interface BookingDetails {
   CarID: string;
@@ -21,7 +12,7 @@ interface BookingDetails {
 // Use NextRequest and NextResponse for handling requests and responses
 export async function POST(request: NextRequest) {
   // Ensure the body is read as a JSON object
-  const requestBody = await request.text(); // Use .text() to read the body text directly
+  const requestBody = await request.text();
   const { CarID, userID, startDate, endDate } = JSON.parse(
     requestBody
   ) as BookingDetails;
