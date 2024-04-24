@@ -61,7 +61,7 @@ const UsersCarCard: React.FC<{ car: Car }> = ({ car }) => {
           <ul>
             <li>Car ID: {car.CarID}</li>
             <li>Location: {car.location}</li>
-            <li>Price: ${car.price} per day</li>
+            <li>Price: €{car.price} per day</li>
             <li>
               Availability: {car.availability ? "Available" : "Not Available"}
             </li>
